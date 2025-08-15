@@ -1,0 +1,74 @@
+# Steps to Recreate the CorePay Local Development Environment
+
+This document provides the steps necessary to set up and run the CorePay AI-Powered Digital Twin platform on your local machine.
+
+## 1. Prerequisites
+
+Before you begin, ensure you have the following software installed and running on your system:
+
+*   **Docker:** The platform is fully containerized. You need Docker to build and run the services. You can download it from [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop).
+*   **Docker Compose:** This tool is used to orchestrate the multi-container application. It is typically included with Docker Desktop.
+*   **A terminal or command-line interface:** You will need a way to execute shell commands (e.g., PowerShell, Windows Terminal, or Git Bash on Windows).
+*   **cURL (Optional but Recommended):** A command-line tool for making HTTP requests. This is useful for testing the application. It is available on most operating systems.
+
+## 2. Setup
+
+1.  **Obtain the Source Code:**
+    *   If you are using Git, clone the repository to your local machine:
+        ```sh
+        git clone <repository_url>
+        ```
+    *   If you have the source code as a ZIP file, extract it to a known location.
+
+2.  **Navigate to the Project Directory:**
+    *   Open your terminal and change your directory to the root of the project folder where the `docker-compose.yml` file is located.
+        ```sh
+        cd path/to/core_pay
+        ```
+
+## 3. Running the Environment
+
+1.  **Build and Start the Services:**
+    *   Execute the following command in your terminal from the project's root directory:
+        ```sh
+        docker-compose up --build
+        ```
+    *   **What this command does:**
+        *   `--build`: This flag forces Docker Compose to build the Docker images for each custom microservice (e.g., `transaction-ingestion-service`, `ai-engine`) based on their respective `Dockerfile`.
+        *   `up`: This command starts all the services defined in the `docker-compose.yml` file in the correct order, respecting the `depends_on` configuration.
+
+2.  **Verify the Services are Running:**
+    *   You will see a stream of log output from all the services in your terminal.
+    *   The `kafka-setup` service should run first and create the topics.
+    *   The other services will then start and begin printing their status messages (e.g., "AI Engine is listening for messages...").
+    *   To see the running containers in a separate terminal, you can use the command `docker ps`.
+
+## 4. Interacting with the Application
+
+The only external entry point currently implemented is the `transaction-ingestion-service`.
+
+1.  **Open a new terminal.**
+
+2.  **Send a Test Transaction:**
+    *   Use `cURL` to send a `POST` request to the service. The project includes a sample `transaction.json` file you can use as the payload.
+    *   From the project's root directory, run the following command:
+        ```sh
+        curl -X POST -H "Content-Type: application/json" --data "@transaction.json" http://localhost:8080/transaction
+        ```
+    *   **Expected Response:** You should receive a JSON response from the service:
+        ```json
+        {"status":"Transaction received"}
+        ```
+
+3.  **Check the Logs:**
+    *   Go back to the terminal where `docker-compose` is running. You should see a log entry from the `ai-engine` service indicating that it has received the transaction you just sent.
+
+## 5. Stopping the Environment
+
+1.  **Stop and Remove Containers:**
+    *   To stop all the running services, press `Ctrl + C` in the terminal where `docker-compose up` is running.
+    *   To ensure all containers, networks, and volumes are removed, run the following command from the project's root directory:
+        ```sh
+        docker-compose down
+        ```
+    *   If you created a volume for Couchbase data, this command will also remove it if you add the `-v` flag (`docker-compose down -v`).
