@@ -34,20 +34,33 @@ services:
     volumes:
       - couchbase_data:/opt/couchbase/var
 
-  # Application Microservices (Placeholders)
-  transaction-ingestion-service:
-    build: ./transaction-ingestion-service
-    container_name: transaction-ingestion-service
+  mock-payment-gateway:
+    build: ./mock-payment-gateway
+    container_name: mock-payment-gateway
     ports:
-      - "8080:8080"
+      - "5000:5000"
     environment:
       - PYTHONUNBUFFERED=1
+
+  # Application Microservices
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
     depends_on:
       - kafka
 
   ai-engine:
     build: ./ai-engine
     container_name: ai-engine
+    environment:
+      - PYTHONUNBUFFERED=1
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - MOCK_GATEWAY_URL=http://mock-payment-gateway:5000/process
     depends_on:
       - kafka
       - couchbase
@@ -55,6 +68,13 @@ services:
   digital-twin-service:
     build: ./digital-twin-service
     container_name: digital-twin-service
+    environment:
+      - PYTHONUNBUFFERED=1
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - COUCHBASE_HOST=couchbase
+      - COUCHBASE_USERNAME=Administrator
+      - COUCHBASE_PASSWORD=password
+      - COUCHBASE_BUCKET=default
     depends_on:
       - kafka
       - couchbase
@@ -64,12 +84,16 @@ services:
     container_name: divergence-detector
     environment:
       - PYTHONUNBUFFERED=1
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
     depends_on:
       - kafka
 
   kafka-setup:
     build: ./kafka_setup
     container_name: kafka-setup
+    environment:
+      - PYTHONUNBUFFERED=1
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
     depends_on:
       - kafka
 

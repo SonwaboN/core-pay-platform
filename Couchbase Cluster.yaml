@@ -1,0 +1,97 @@
+﻿kind: Namespace
+apiVersion: v1
+metadata:
+  name: shumani-monyai2-dev
+  uid: 1926c999-7c1a-4687-9223-b87309f00bb3
+  resourceVersion: '3454404097'
+  creationTimestamp: '2025-08-16T06:05:01Z'
+  labels:
+    toolchain.dev.openshift.com/tier: base1ns
+    toolchain.dev.openshift.com/space: shumani-monyai2
+    kubernetes.io/metadata.name: shumani-monyai2-dev
+    modelmesh-enabled: 'true'
+    openshift-pipelines.tekton.dev/namespace-reconcile-version: 1.19.2
+    name: shumani-monyai2-dev
+    pod-security.kubernetes.io/warn: baseline
+    toolchain.dev.openshift.com/provider: codeready-toolchain
+    pod-security.kubernetes.io/audit: baseline
+    toolchain.dev.openshift.com/templateref: base1ns-dev-0bff31a-0bff31a
+    pod-security.kubernetes.io/warn-version: latest
+    opendatahub.io/dashboard: 'true'
+    toolchain.dev.openshift.com/type: dev
+    pod-security.kubernetes.io/audit-version: latest
+  annotations:
+    openshift.io/description: shumani-monyai2-dev
+    openshift.io/display-name: shumani-monyai2-dev
+    openshift.io/requester: shumani-monyai2
+    toolchain.dev.openshift.com/last-applied-configuration: '{"apiVersion":"v1","kind":"Namespace","metadata":{"annotations":{"openshift.io/description":"shumani-monyai2-dev","openshift.io/display-name":"shumani-monyai2-dev","openshift.io/requester":"shumani-monyai2"},"labels":{"modelmesh-enabled":"true","name":"shumani-monyai2-dev","opendatahub.io/dashboard":"true","toolchain.dev.openshift.com/provider":"codeready-toolchain","toolchain.dev.openshift.com/space":"shumani-monyai2","toolchain.dev.openshift.com/type":"dev"},"name":"shumani-monyai2-dev"}}'
+    toolchain.dev.openshift.com/last-applied-space-roles: '[{"templateRef":"base1ns-admin-88b275d-88b275d","usernames":["shumani-monyai2"]}]'
+    openshift.io/sa.scc.supplemental-groups: 1011710000/10000
+    openshift.io/sa.scc.mcs: 's0:c108,c77'
+    openshift.io/sa.scc.uid-range: 1011710000/10000
+    security.openshift.io/MinimallySufficientPodSecurityStandard: baseline
+  managedFields:
+    - manager: pod-security-admission-label-synchronization-controller
+      operation: Apply
+      apiVersion: v1
+      time: '2025-08-16T06:05:51Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:annotations':
+            'f:security.openshift.io/MinimallySufficientPodSecurityStandard': {}
+          'f:labels':
+            'f:pod-security.kubernetes.io/audit': {}
+            'f:pod-security.kubernetes.io/audit-version': {}
+            'f:pod-security.kubernetes.io/warn': {}
+            'f:pod-security.kubernetes.io/warn-version': {}
+    - manager: cluster-policy-controller
+      operation: Update
+      apiVersion: v1
+      time: '2025-08-16T06:05:01Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:annotations':
+            'f:openshift.io/sa.scc.mcs': {}
+            'f:openshift.io/sa.scc.supplemental-groups': {}
+            'f:openshift.io/sa.scc.uid-range': {}
+    - manager: member-operator
+      operation: Update
+      apiVersion: v1
+      time: '2025-08-16T06:05:02Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:annotations':
+            .: {}
+            'f:openshift.io/description': {}
+            'f:openshift.io/display-name': {}
+            'f:openshift.io/requester': {}
+            'f:toolchain.dev.openshift.com/last-applied-configuration': {}
+            'f:toolchain.dev.openshift.com/last-applied-space-roles': {}
+          'f:labels':
+            'f:toolchain.dev.openshift.com/templateref': {}
+            'f:toolchain.dev.openshift.com/provider': {}
+            'f:opendatahub.io/dashboard': {}
+            .: {}
+            'f:toolchain.dev.openshift.com/space': {}
+            'f:toolchain.dev.openshift.com/type': {}
+            'f:kubernetes.io/metadata.name': {}
+            'f:modelmesh-enabled': {}
+            'f:toolchain.dev.openshift.com/tier': {}
+            'f:name': {}
+    - manager: openshift-pipelines-operator
+      operation: Update
+      apiVersion: v1
+      time: '2025-08-16T06:05:51Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:labels':
+            'f:openshift-pipelines.tekton.dev/namespace-reconcile-version': {}
+spec:
+  finalizers:
+    - kubernetes
+status:
+  phase: Active

@@ -1,2 +1,4 @@
 kafka-python
 couchbase
+fastapi==0.103.2
+uvicorn[standard]==0.23.2

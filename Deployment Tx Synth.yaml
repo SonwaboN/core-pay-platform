@@ -1,0 +1,170 @@
+﻿kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: tx-synth
+  namespace: shumani-monyai2-dev
+  uid: 7c9ec0a9-85ea-49fa-95ad-a18c3efb01c6
+  resourceVersion: '3454926041'
+  generation: 1
+  creationTimestamp: '2025-08-16T06:35:44Z'
+  annotations:
+    deployment.kubernetes.io/revision: '1'
+  managedFields:
+    - manager: Mozilla
+      operation: Update
+      apiVersion: apps/v1
+      time: '2025-08-16T06:35:44Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:spec':
+          'f:progressDeadlineSeconds': {}
+          'f:replicas': {}
+          'f:revisionHistoryLimit': {}
+          'f:selector': {}
+          'f:strategy':
+            'f:rollingUpdate':
+              .: {}
+              'f:maxSurge': {}
+              'f:maxUnavailable': {}
+            'f:type': {}
+          'f:template':
+            'f:metadata':
+              'f:labels':
+                .: {}
+                'f:app': {}
+            'f:spec':
+              'f:containers':
+                'k:{"name":"app"}':
+                  'f:image': {}
+                  'f:terminationMessagePolicy': {}
+                  .: {}
+                  'f:resources': {}
+                  'f:args': {}
+                  'f:command': {}
+                  'f:env':
+                    .: {}
+                    'k:{"name":"BOOTSTRAP"}':
+                      .: {}
+                      'f:name': {}
+                      'f:value': {}
+                  'f:terminationMessagePath': {}
+                  'f:imagePullPolicy': {}
+                  'f:name': {}
+              'f:dnsPolicy': {}
+              'f:restartPolicy': {}
+              'f:schedulerName': {}
+              'f:securityContext': {}
+              'f:terminationGracePeriodSeconds': {}
+    - manager: kube-controller-manager
+      operation: Update
+      apiVersion: apps/v1
+      time: '2025-08-16T06:36:21Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:annotations':
+            .: {}
+            'f:deployment.kubernetes.io/revision': {}
+        'f:status':
+          'f:conditions':
+            .: {}
+            'k:{"type":"Available"}':
+              .: {}
+              'f:lastTransitionTime': {}
+              'f:lastUpdateTime': {}
+              'f:message': {}
+              'f:reason': {}
+              'f:status': {}
+              'f:type': {}
+            'k:{"type":"Progressing"}':
+              .: {}
+              'f:lastTransitionTime': {}
+              'f:lastUpdateTime': {}
+              'f:message': {}
+              'f:reason': {}
+              'f:status': {}
+              'f:type': {}
+          'f:observedGeneration': {}
+          'f:replicas': {}
+          'f:unavailableReplicas': {}
+          'f:updatedReplicas': {}
+      subresource: status
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tx-synth
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: tx-synth
+    spec:
+      containers:
+        - resources: {}
+          terminationMessagePath: /dev/termination-log
+          name: app
+          command:
+            - bash
+            - '-lc'
+          env:
+            - name: BOOTSTRAP
+              value: 'demo-kafka-kafka-bootstrap:9092'
+          imagePullPolicy: Always
+          terminationMessagePolicy: File
+          image: 'registry.access.redhat.com/ubi9/python-311:latest'
+          args:
+            - |
+              pip install kafka-python && cat <<'PY' > app.py
+              import os, json, random, time
+              from kafka import KafkaProducer
+              p = KafkaProducer(bootstrap_servers=os.getenv("BOOTSTRAP","demo-kafka-kafka-bootstrap:9092"),
+                                value_serializer=lambda v: json.dumps(v).encode("utf-8"),
+                                key_serializer=lambda k: k.encode("utf-8"))
+              def tx():
+                  return {
+                    "amount": random.randint(100, 200000),
+                    "currency": random.choice(["ZAR","USD","EUR","GBP"]),
+                    "method": random.choice(["card","ach","wallet","apm"]),
+                    "device_trust": random.randint(0,100),
+                    "geo": random.choice(["ZA","US","EU","UK","BR","IN"]),
+                    "timestamp": time.time()
+                  }
+              while True:
+                  k = f"txn_{int(time.time()*1000)}"
+                  v = tx()
+                  p.send("tx-events", key=k, value=v)
+                  p.flush()
+                  time.sleep(0.5)
+              PY
+              python app.py
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
+status:
+  observedGeneration: 1
+  replicas: 1
+  updatedReplicas: 1
+  unavailableReplicas: 1
+  conditions:
+    - type: Progressing
+      status: 'True'
+      lastUpdateTime: '2025-08-16T06:35:54Z'
+      lastTransitionTime: '2025-08-16T06:35:44Z'
+      reason: NewReplicaSetAvailable
+      message: ReplicaSet "tx-synth-7695cc789d" has successfully progressed.
+    - type: Available
+      status: 'False'
+      lastUpdateTime: '2025-08-16T06:36:21Z'
+      lastTransitionTime: '2025-08-16T06:36:21Z'
+      reason: MinimumReplicasUnavailable
+      message: Deployment does not have minimum availability.

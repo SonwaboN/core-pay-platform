@@ -1,16 +1,18 @@
 import time
 from kafka.admin import KafkaAdminClient, NewTopic
 from kafka.errors import TopicAlreadyExistsError, NoBrokersAvailable
+import os
 
 def create_kafka_topics():
     # Configuration
-    bootstrap_servers = 'kafka:29092'
+    bootstrap_servers = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "kafka:29092")
     topic_list = [
         NewTopic(name='raw_transactions', num_partitions=1, replication_factor=1),
         NewTopic(name='enriched_transaction', num_partitions=1, replication_factor=1),
         NewTopic(name='compliance_checked_transaction', num_partitions=1, replication_factor=1),
         NewTopic(name='fraud_scored_transaction', num_partitions=1, replication_factor=1),
         NewTopic(name='final_decision', num_partitions=1, replication_factor=1),
+        NewTopic(name='live_outcome', num_partitions=1, replication_factor=1),
         NewTopic(name='simulation_outcome', num_partitions=1, replication_factor=1),
         NewTopic(name='divergence_alert', num_partitions=1, replication_factor=1)
     ]

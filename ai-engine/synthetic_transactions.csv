@@ -1,0 +1,11 @@
+customer_id,amount,transactions_per_hour,device_type,is_fraud
+cust_001,150.00,1,mobile,0
+cust_002,2500.00,3,desktop,0
+cust_003,50.00,5,mobile,0
+cust_004,15000.00,24,desktop,1
+cust_005,200.00,2,mobile,0
+cust_006,8000.00,8,mobile,1
+cust_007,1200.00,1,desktop,0
+cust_008,500.00,10,mobile,1
+cust_009,100.00,3,desktop,0
+cust_010,950.00,1,mobile,0

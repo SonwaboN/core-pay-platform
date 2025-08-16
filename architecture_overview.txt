@@ -1,0 +1,67 @@
+# CorePay Platform: Architecture Overview
+
+This document provides a detailed explanation of the microservices architecture for the CorePay AI-Powered Digital Twin Platform.
+
+## 1. Core Philosophy & Architectural Pattern
+
+The platform is built on an **event-driven, microservices architecture**. This pattern was chosen for several key reasons:
+
+*   **Scalability:** Each microservice can be scaled independently to handle varying loads. For example, if transaction ingestion becomes a bottleneck, we can scale only that service.
+*   **Resilience:** The failure of one service (e.g., the divergence detector) does not necessarily bring down the entire platform. The asynchronous nature of event streaming means services can process data when they are ready.
+*   **Decoupling:** Services are loosely coupled. They communicate through a central event bus (Kafka) rather than direct API calls, which simplifies development and allows for easier replacement or upgrading of individual components.
+
+## 2. Core Technologies
+
+*   **Application Logic:** Python
+*   **API Framework:** Flask (for services exposing HTTP endpoints)
+*   **Event Streaming:** Apache Kafka
+*   **Database:** Couchbase (for storing digital twin data)
+*   **Containerization & Orchestration:** Docker and Docker Compose
+
+## 3. Component Breakdown
+
+Here is a description of each component in the architecture:
+
+*   **Transaction Ingestion Service:**
+    *   **Role:** The single, secure entry point for all incoming payment requests from client systems.
+    *   **Function:** It receives a JSON payload via a REST API, validates it, and publishes it as a `raw_transaction` event to Kafka. It does not contain any business logic.
+
+*   **Kafka (Event Backbone):**
+    *   **Role:** The central nervous system of the platform. It enables asynchronous communication between all services.
+    *   **Key Topics:**
+        *   `raw_transactions`: The initial stream of unprocessed transactions.
+        *   `live_outcome`: Contains the results from the "Live Path" processing.
+        *   `simulation_outcome`: Contains the results from the "Simulation Path" processing.
+        *   `divergence_alert`: A dedicated topic for broadcasting alerts when a mismatch between the live and simulation paths is detected.
+
+*   **AI Engine:**
+    *   **Role:** The core processing brain of the platform.
+    *   **Function:** It consumes from `raw_transactions` and executes two parallel workflows for each transaction:
+        1.  **The Live Path:** This path simulates a real-world transaction. It makes calls to external dependencies (like a payment gateway) and uses production-grade models to generate a decision. The result is published to `live_outcome`.
+        2.  **The Simulation Path:** This path uses the customer's historical data (the "digital twin") to predict the transaction's outcome. It queries the Digital Twin Service to get this historical context. The result is published to `simulation_outcome`.
+
+*   **Digital Twin Service:**
+    *   **Role:** The system's memory. It maintains the state and history of each customer.
+    *   **Function:** It consumes from the `live_outcome` topic to continuously update the customer's profile in the database with the latest transaction data. It also exposes an internal API for the AI Engine to query this data during the simulation path.
+
+*   **Couchbase (Data Store):**
+    *   **Role:** The persistence layer for the Digital Twin Service.
+    *   **Function:** Stores flexible JSON documents, where each document represents a customer's "digital twin," containing their profile, transaction history, and calculated risk models.
+
+*   **Divergence Detector:**
+    *   **Role:** The critical safety and monitoring component.
+    *   **Function:** It consumes from both the `live_outcome` and `simulation_outcome` topics. It pairs messages using a unique transaction ID and compares their final decisions. If the decisions do not match, it signifies a divergence, and an alert is published to the `divergence_alert` topic for immediate investigation.
+
+## 4. Data Flow Walkthrough
+
+Here is the step-by-step journey of a single transaction:
+
+1.  A client sends a payment request to the **Transaction Ingestion Service**.
+2.  The service publishes the transaction to the `raw_transactions` topic in **Kafka**.
+3.  The **AI Engine** picks up the message.
+4.  It simultaneously begins processing the **Live Path** (calling external gateways) and the **Simulation Path** (querying the **Digital Twin Service**).
+5.  The AI Engine publishes the Live result to the `live_outcome` topic and the Simulation result to the `simulation_outcome` topic.
+6.  The **Digital Twin Service** consumes the message from `live_outcome` and updates the customer's record in **Couchbase**.
+7.  The **Divergence Detector** consumes both messages, compares them, and takes one of two actions:
+    *   **Happy Path:** The outcomes match. No action is taken.
+    *   **Divergence Scenario:** The outcomes differ. The detector publishes a detailed message to the `divergence_alert` topic.

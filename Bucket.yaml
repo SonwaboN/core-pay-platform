@@ -1,0 +1,148 @@
+﻿apiVersion: automationcontroller.ansible.com/v1beta1
+kind: AutomationController
+metadata:
+  creationTimestamp: '2025-08-16T06:14:56Z'
+  generation: 1
+  labels:
+    app.kubernetes.io/component: automationcontroller
+    app.kubernetes.io/managed-by: automationcontroller-operator
+    app.kubernetes.io/operator-version: '2.5'
+    app.kubernetes.io/part-of: tx-bucket
+  managedFields:
+    - apiVersion: automationcontroller.ansible.com/v1beta1
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:spec':
+          'f:ipv6_disabled': {}
+          'f:auto_upgrade': {}
+          'f:task_liveness_failure_threshold': {}
+          'f:set_self_labels': {}
+          'f:web_readiness_failure_threshold': {}
+          'f:public_base_url': {}
+          'f:web_liveness_timeout': {}
+          'f:task_readiness_timeout': {}
+          'f:postgres_keepalives_interval': {}
+          'f:loadbalancer_protocol': {}
+          'f:metrics_utility_cronjob_gather_schedule': {}
+          'f:metrics_utility_pvc_claim_size': {}
+          'f:loadbalancer_class': {}
+          'f:projects_storage_access_mode': {}
+          'f:task_liveness_timeout': {}
+          'f:web_liveness_initial_delay': {}
+          'f:web_readiness_timeout': {}
+          'f:task_readiness_initial_delay': {}
+          'f:postgres_keepalives_count': {}
+          .: {}
+          'f:projects_persistence': {}
+          'f:task_manage_replicas': {}
+          'f:create_preload_data': {}
+          'f:admin_user': {}
+          'f:metrics_utility_cronjob_report_schedule': {}
+          'f:replicas': {}
+          'f:loadbalancer_port': {}
+          'f:route_tls_termination_mechanism': {}
+          'f:garbage_collect_secrets': {}
+          'f:task_liveness_initial_delay': {}
+          'f:image_pull_policy': {}
+          'f:web_readiness_initial_delay': {}
+          'f:web_readiness_period': {}
+          'f:web_manage_replicas': {}
+          'f:metrics_utility_console_enabled': {}
+          'f:loadbalancer_ip': {}
+          'f:postgres_keepalives_idle': {}
+          'f:projects_storage_size': {}
+          'f:task_liveness_period': {}
+          'f:ingress_type': {}
+          'f:web_liveness_failure_threshold': {}
+          'f:task_privileged': {}
+          'f:no_log': {}
+          'f:task_readiness_failure_threshold': {}
+          'f:task_readiness_period': {}
+          'f:postgres_keepalives': {}
+          'f:web_liveness_period': {}
+          'f:metrics_utility_enabled': {}
+      manager: Mozilla
+      operation: Update
+      time: '2025-08-16T06:14:56Z'
+    - apiVersion: automationcontroller.ansible.com/v1beta1
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:status':
+          .: {}
+          'f:conditions': {}
+      manager: ansible-operator
+      operation: Update
+      subresource: status
+      time: '2025-08-16T06:14:56Z'
+    - apiVersion: automationcontroller.ansible.com/v1beta1
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:labels':
+            .: {}
+            'f:app.kubernetes.io/component': {}
+            'f:app.kubernetes.io/managed-by': {}
+            'f:app.kubernetes.io/operator-version': {}
+            'f:app.kubernetes.io/part-of': {}
+      manager: OpenAPI-Generator
+      operation: Update
+      time: '2025-08-16T06:15:06Z'
+  name: tx-bucket
+  namespace: shumani-monyai2-dev
+  resourceVersion: '3454567132'
+  uid: c5251304-a4ba-458a-b761-c388b4779de1
+spec:
+  web_readiness_timeout: 1
+  postgres_keepalives_count: 5
+  web_readiness_period: 0
+  postgres_keepalives_idle: 5
+  task_liveness_period: 0
+  metrics_utility_cronjob_report_schedule: '@monthly'
+  create_preload_data: true
+  route_tls_termination_mechanism: Edge
+  garbage_collect_secrets: false
+  ingress_type: Route
+  loadbalancer_port: 80
+  web_liveness_failure_threshold: 3
+  task_liveness_initial_delay: 5
+  no_log: true
+  task_readiness_failure_threshold: 3
+  image_pull_policy: IfNotPresent
+  web_readiness_initial_delay: 20
+  metrics_utility_console_enabled: false
+  loadbalancer_ip: ''
+  web_manage_replicas: true
+  projects_storage_size: 8Gi
+  auto_upgrade: true
+  task_privileged: false
+  task_readiness_period: 0
+  web_liveness_timeout: 1
+  postgres_keepalives: true
+  task_readiness_timeout: 1
+  web_liveness_period: 0
+  metrics_utility_enabled: false
+  postgres_keepalives_interval: 5
+  ipv6_disabled: false
+  task_liveness_failure_threshold: 3
+  projects_storage_access_mode: ReadWriteMany
+  metrics_utility_pvc_claim_size: 5Gi
+  loadbalancer_class: ''
+  set_self_labels: true
+  web_readiness_failure_threshold: 3
+  web_liveness_initial_delay: 5
+  public_base_url: ''
+  task_readiness_initial_delay: 20
+  projects_persistence: false
+  task_manage_replicas: true
+  replicas: 1
+  admin_user: admin
+  loadbalancer_protocol: http
+  metrics_utility_cronjob_gather_schedule: '@hourly'
+  task_liveness_timeout: 1
+status:
+  conditions:
+    - lastTransitionTime: '2025-08-16T06:14:56Z'
+      message: Running reconciliation
+      reason: Running
+      status: 'True'
+      type: Running
